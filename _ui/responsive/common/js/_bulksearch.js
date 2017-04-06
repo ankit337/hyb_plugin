@@ -37,7 +37,7 @@ ACC.bulksearch = {
         $.widget("custom.bulksearch", {
             _create: function() {
                 _this = this;
-                
+
                 _this.bindOpen();
             },
 
@@ -76,7 +76,7 @@ ACC.bulksearch = {
                 event.preventDefault();
 
                 var code = $(event.target).data('code');
-                
+
                 var productCacheKey;
                 var productCacheValue;
 
@@ -118,13 +118,6 @@ ACC.bulksearch = {
                     success: ACC.product.displayAddToCartPopup
                 });
 
-                //Request URL:
-                //Request Method:POST
-
-                //options.data = "CSRFToken=" + ACC.config.CSRFToken;
-
-                //qty=1&productCodePost=1422222&CSRFToken=631820c5-2993-463f-9aff-1160a5e10f59
-
                 return false;
             },
 
@@ -144,14 +137,14 @@ ACC.bulksearch = {
 
                     //GET first thumbnail
                     if (!product) {
-                        console.warn('prepareModel >> No product');
+                        console.warn("prepareModel >> No product");
                         product = {};
-                        product.thumbnail = '';
+                        product.thumbnail = "";
                         return product;
                     }
 
                     if (Array.isArray(product)) {
-                        
+
                         product = product.map(function(product) {
                             addThumbnail(product);
 
@@ -205,9 +198,7 @@ ACC.bulksearch = {
             },
 
             loadProducts: function () {
-                console.log('loadProducts');
-                
-                var productKeys = $component.find('textarea').val().split('\n');
+                var productKeys = $component.find("textarea").val().split("\n");
                 var dataForTemplate = {products: [ ]};
 
                 dataForTemplate.products = productKeys.map(function(productKey) {
@@ -219,7 +210,7 @@ ACC.bulksearch = {
                             return _this.getFromCache(productKey)[0];
                         }
                     } else {
-                        return {name: '', productKey: productKey}
+                        return {name: "", productKey: productKey}
                     }
                 });
 
@@ -244,7 +235,7 @@ ACC.bulksearch = {
 
                     requestTimer = setTimeout(function() {
                         ACC.bulksearch.UTIL.getProducts(productKeysForSearch, function (newProductsMap) {
-                            
+
                             Object.keys(newProductsMap).forEach(function(value) {
                                 var productKey = value;
 
@@ -263,7 +254,7 @@ ACC.bulksearch = {
                                         return _this.getFromCache(productKey)[0];
                                     }
                                 } else {
-                                    return {name: productKey + ' Not Found', thumbnail: ''}
+                                    return {name: productKey + " Not Found", thumbnail: ""}
                                 }
                             });
 
@@ -274,18 +265,18 @@ ACC.bulksearch = {
             },
 
             sanitizeInputArea: function() {
-                var $textarea = $component.find('textarea');
+                var $textarea = $component.find("textarea");
 
                 //TODO: sanitize event properly
                 // - do not remove from middle of text
                 $textarea.val($textarea.val()
-                                    .replace(/\n\n/g, '\n')
-                                    .replace(/,/g, '\n')
+                    .replace(/\n\n/g, "\n")
+                    .replace(/,/g, "\n")
                 );
             },
 
             adjustHeight: function() {
-                var $textarea = $component.find('textarea');
+                var $textarea = $component.find("textarea");
                 var text = $textarea.val();
 
                 window.test = text;
@@ -304,11 +295,11 @@ ACC.bulksearch.UTIL = {
     getProducts: function getProducts(productList, callback) {
         var getarray = [],
 
-        getarray = productList.map(function(productKey) {
-            if (productKey) {
-                return ACC.bulksearch.UTIL.getProduct(productKey);
-            }
-        });
+            getarray = productList.map(function(productKey) {
+                if (productKey) {
+                    return ACC.bulksearch.UTIL.getProduct(productKey);
+                }
+            });
 
         $.when.apply($, getarray).done(function() {
             var result = {};
@@ -321,7 +312,7 @@ ACC.bulksearch.UTIL = {
                         result[productList[0]] = value.products;
                     }
                 } else
-                    {
+                {
                     Array.apply(null, arguments).forEach(function (xhr, index){
                         var value = xhr[0];
 
@@ -339,7 +330,7 @@ ACC.bulksearch.UTIL = {
 
     getProduct: function (productKey) {
         return $.ajax({
-            url: '/trainingstorefront/electronics/en/search/autocomplete/SearchBox',
+            url: "/trainingstorefront/electronics/en/search/autocomplete/SearchBox",
             data: {
                 term: productKey
             }
@@ -347,12 +338,10 @@ ACC.bulksearch.UTIL = {
     }
 
 
-}
+};
 
 /*TODO
  - advanced select
  - warn user at console if something wrong immediately
  - simplify
-*/
-
-
+ */

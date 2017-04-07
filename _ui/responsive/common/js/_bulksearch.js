@@ -43,17 +43,31 @@ ACC.bulksearch = {
 
             bindOpen: function() {
                 $bulkSearch.click(_this.initBulkSearch);
+                $("#js-site-search-input").on("keyup paste", _this.onSearchBoxEdit);
             },
 
             bindEvents: function() {
                 $component.on("click", ".js-site-search-bulk-mode__close-button", _this.close);
                 $component.on("click", ".js-add-to-cart", _this.addToCart);
                 $component.on("click", ".select-this-option", _this.selectProduct);
-                $component.on("keypress keyup", ".js-site-search-bulk-mode__editor ", _this.onEdit);
+                $component.on("keyup", ".js-site-search-bulk-mode__editor ", _this.onEdit);
+            },
+
+            onSearchBoxEdit: function() {
+                var searchBoxValue = $(event.target).val();
+
+                if (searchBoxValue.split(";").length > 1) {
+                    _this.initBulkSearch();
+                    $component.find("textarea").val(searchBoxValue.replace(/;/g, "\n"));
+                    debugger;
+                    $component.find("textarea").focus();
+                }
             },
 
             initBulkSearch: function($event) {
-                $event.preventDefault();
+                if ($event) {
+                    $event.preventDefault();
+                }
 
                 var data = {products: []};
 
@@ -75,7 +89,7 @@ ACC.bulksearch = {
             selectProduct: function (event) {
                 event.preventDefault();
 
-                var code = $(event.target).data('code');
+                var code = $(event.target).data("code");
 
                 var productCacheKey;
                 var productCacheValue;
@@ -99,24 +113,16 @@ ACC.bulksearch = {
 
                     _this.onEdit();
 
-                    $component.find('textarea').focus();
+                    $component.find("textarea").focus();
                 }
             },
 
             addToCart: function(event) {
                 event.preventDefault();
 
-                var request = {
-                    qty: 1,
-                    productCodePost: $(event.target).data('code')
-                };
+                var productCode = $(event.target).data("code");
 
-                $.ajax({
-                    type: "POST",
-                    url: "/trainingstorefront/electronics/en/cart/add",
-                    data: request,
-                    success: ACC.product.displayAddToCartPopup
-                });
+                ACC.bulksearch.UTIL.addToCart(productCode);
 
                 return false;
             },
@@ -128,7 +134,7 @@ ACC.bulksearch = {
 
                     _this.bindEvents();
                 } catch (e) {
-                    console.warn('Bulk Search >> Template parsing error', e);
+                    console.warn("Bulk Search >> Template parsing error", e);
                 }
             },
 
@@ -335,8 +341,21 @@ ACC.bulksearch.UTIL = {
                 term: productKey
             }
         });
-    }
+    },
 
+    addToCart: function(productCode) {
+        var request = {
+            qty: 1,
+            productCodePost: productCode
+        };
+
+        $.ajax({
+            type: "POST",
+            url: "/trainingstorefront/electronics/en/cart/add",
+            data: request,
+            success: ACC.product.displayAddToCartPopup
+        });
+    }
 
 };
 
@@ -345,3 +364,5 @@ ACC.bulksearch.UTIL = {
  - warn user at console if something wrong immediately
  - simplify
  */
+
+
